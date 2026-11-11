@@ -159,8 +159,8 @@
        cy="102.95097"
        r="0.39687499" />
     <circle
-       id="path21"
-       style="fill:#ff0000;stroke:none;stroke-width:0.264583"
+       id="pivot"
+       style="fill:#00ffff;stroke:none;stroke-width:0.264583"
        cx="122.25428"
        cy="135.12314"
        r="0.39687499" />
