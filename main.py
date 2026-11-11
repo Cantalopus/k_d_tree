@@ -5,8 +5,10 @@ def circle_to_point(circle):
     return (float(circle.attrib['cx']),
             float(circle.attrib['cy']))
 
-def get_points_from_svg(svg_file_name):
-    tree = ET.parse(svg_file_name)
+def read_svg_file(svg_file_name):
+    return ET.parse(svg_file_name)
+
+def get_all_points(tree):
     return [circle_to_point(circle)
      for circle in tree.iter('{http://www.w3.org/2000/svg}circle')]
 
