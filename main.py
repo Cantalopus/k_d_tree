@@ -1,6 +1,9 @@
 import math 
 import xml.etree.ElementTree as ET
 
+CIRCLE_TAG_NAME = '{http://www.w3.org/2000/svg}circle'
+GROUP_TAG_NAME = '{http://www.w3.org/2000/svg}g' 
+
 def circle_to_point(circle):
     return (float(circle.attrib['cx']),
             float(circle.attrib['cy']))
@@ -10,7 +13,28 @@ def read_svg_file(svg_file_name):
 
 def get_all_points(tree):
     return [circle_to_point(circle)
-     for circle in tree.iter('{http://www.w3.org/2000/svg}circle')]
+     for circle in tree.iter(CIRCLE_TAG_NAME)]
+
+def get_point_by_id(tree, point_id):
+    return [circle_to_point(circle)
+            for circle in tree.iter(CIRCLE_TAG_NAME)
+            if 'id' in circle.attrib
+            if circle.attrib['id'] == point_id]
+
+def get_group_by_id(tree, group_id):
+    return [circle
+            for group in tree.iter(GROUP_TAG_NAME)
+            if 'id' in group.attrib
+            if group.attrib['id'] == group_id
+            for circle in get_all_points(group)]
+
+svg_tree = read_svg_file('k_d_tree_POINTS.svg')
+[pivot] = get_point_by_id(svg_tree, 'pivot')
+points = get_group_by_id(svg_tree, 'points')
+
+print("Pivot:", pivot)
+print("Points:", points)
+print("Number of points:", len(points))
 
 def distance(point1, point2):
 	x1, y1 = point1
@@ -33,3 +57,21 @@ def closest_point(all_points, new_point):
             best_point = current_point
     
     return best_point
+
+k = 2
+
+def build_kdtree(points, depth=0):
+    n = len(points)
+
+    if n <= 0:
+        return None
+
+    axis = depth % k
+
+    sorted_points = sorted(points, key=lambda point: point[axis])
+
+    return {
+        'point': sorted_points[n // 2],
+        'left': build_kdtree(sorted_points[:n // 2], depth + 1),
+        'right': build_kdtree(sorted_points[n // 2 + 1:], depth + 1)
+    }
